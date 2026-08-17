@@ -2,10 +2,7 @@
 .venv/
 test-results/
 tests/__pycache__/
-tests/ui/__pycache__/
-tests/api/__pycache__/
-pages/__pycache__/
-api_requests/__pycache__/
+utils/__pycache__/
 reports/
 test-reports/
 allure-results/
