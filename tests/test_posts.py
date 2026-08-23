@@ -47,3 +47,27 @@ def test_get_post_by_id():
         assert_that(res_body).contains_key('body')
         assert_that(res_body['title']).is_equal_to('ea molestias quasi exercitationem repellat qui ipsa sit aut')
         logging.info(f"Assert passed. selected post is {res_body}")
+
+
+def test_get_all_comments_of_post_by_postId(post_id):
+
+    res = client.get(f"/posts/{post_id}/comments")
+    res_body = res.json()
+
+    #Assertions
+    with allure.step("Assert status code"):
+        assert client.status_code(res, 200), f"Assert failed. status code is {res.status_code}"
+        logging.info(f"Assert passed. Status code is {res.status_code}")
+
+
+    with allure.step("Assert posts"):
+        assert len(res_body) == 5, f"Assert failed. len of posts = {len(res_body)}."
+        logging.info(f"Assert passed. len of posts = {len(res_body)}.")
+
+
+    with allure.step(f"Assert all postId = {post_id}"):
+        assert all(
+            comment['postId'] == post_id
+            for comment in res_body
+        ), f"Assert failed. not all comments belong to postId = {post_id}"
+        logging.info(f"Assert passed. all postId = {post_id}")
