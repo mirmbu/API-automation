@@ -4,10 +4,10 @@ from utils.api_config import APIClient
 
 def pytest_addoption(parser):
     parser.addoption(
-        "--post-id",
+        "--id",
         action="store",
         required=True,
-        help="Post ID to retrieve comments for",
+        help="ID to retrieve comments for",
     )
 
 @pytest.fixture()
@@ -21,5 +21,5 @@ def client(api_base_url):
 
 
 @pytest.fixture()
-def post_id(request):
-    return int(request.config.getoption("--post-id"))
+def id(request):
+    return int(request.config.getoption("--id"))
