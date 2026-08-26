@@ -128,7 +128,7 @@ def test_insert_new_post(client):
 
 
     with allure.step("Assert new post was created"):
-        assert res_body['id'] == 101, f"Assert failed. post not created. {res_body}."
+        assert res_body['id'] == payload['id'], f"Assert failed. post not created. {res_body}."
         logging.info(f"Assert passed. post created successfully. {res_body}.")
 
 
@@ -147,6 +147,7 @@ def test_insert_new_post(client):
 def test_put_post(client, id):
 
     payload = {
+        "userId": 1,
         "id": id,
         "title": "abcd",
         "body": "hello abcd"
@@ -168,8 +169,49 @@ def test_put_post(client, id):
 
 
     with allure.step("Assert post update with relevant data."):
-        assert set(res_body.keys()) == {"id", "title", "body"}
+        assert set(res_body.keys()) == {"userId", "id", "title", "body"}
         assert res_body['id'] == payload['id']
+        assert res_body['userId'] == payload['userId']
         assert res_body['title'] == payload['title']
         assert res_body['body'] == payload['body']
         logging.info(f"Assert passed. post updated with all data.")
+
+
+#PATCH functions
+
+def test_patch_post(client, id):
+
+    payload = {
+        "title": "new title",
+    }
+
+
+    res = client.patch(f"/posts/{id}", payload)
+    res_body = res.json()
+
+    #Assertions
+    with allure.step("Assert status code"):
+        assert client.status_code(res, 200), f"Assert failed. Status code is {res.status_code}."
+        logging.info(f"Assert passed. Status code is {res.status_code}.")
+
+    with allure.step("Assert new title"):
+        assert res_body['title'] == payload['title']
+        logging.info(f"Assert passed. new titlte is {res_body['title']}.")
+
+
+
+#DELETE functions
+
+def test_delete_post(client, id):
+    res = client.delete(f"/posts/{id}")
+    res_body = res.json()
+
+    #Assertions
+    with allure.step("Assert status code"):
+        assert client.status_code(res, 200), f"Assert failed. Status code is {res.status_code}."
+        logging.info(f"Assert passed. Status code is {res.status_code}.")
+
+    with allure.step("Assert deleted post not exist."):
+        assert_that(res_body).is_empty(), f"Assert failed. not delete the post."
+        logging.info(f"Assert passed. post deleted successfully.")
+

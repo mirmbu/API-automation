@@ -3,6 +3,7 @@ import pytest
 import logging
 from assertpy import assert_that
 
+#GET functions
 
 def test_get_all_comments(client):
     res = client.get("/comments")
@@ -48,5 +49,28 @@ def test_get_comment_by_id(client, id):
         assert_that(res_body).contains_key('email')
         assert_that(res_body).contains_key('body')
         logging.info("Assert passed. comment contain all relevant fields.")
+
+
+def test_insert_new_comment(client, id):
+    payload = {
+        "postId": 1,
+        "id": 501,
+        "name": "comment 501",
+        "email": "aaaa@hotmail.com",
+        "body": "new comment"
+    }
+
+    res = client.post(f"/comments", payload)
+    res_body = res.json()
+
+    #Assertions
+    with allure.step("Assert status code"):
+        assert client.status_code(res, 201), f"Assert failed. Status code is {res.status_code}."
+        logging.info(f"Assert passed. Status code is {res.status_code}.")
+
+
+    with allure.step("Assert new comment was created"):
+        assert res_body['id'] == payload['id'], f"Assert failed. comment not created. {res_body}"
+        logging.info(f"Assert passed. comment created. {res_body}")
 
 
