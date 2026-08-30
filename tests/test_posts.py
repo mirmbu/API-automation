@@ -196,7 +196,7 @@ def test_patch_post(client, id):
 
     with allure.step("Assert new title"):
         assert res_body['title'] == payload['title']
-        logging.info(f"Assert passed. new titlte is {res_body['title']}.")
+        logging.info(f"Assert passed. new title is {res_body['title']}.")
 
 
 

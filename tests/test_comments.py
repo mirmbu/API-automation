@@ -50,6 +50,7 @@ def test_get_comment_by_id(client, id):
         assert_that(res_body).contains_key('body')
         logging.info("Assert passed. comment contain all relevant fields.")
 
+#POST function
 
 def test_insert_new_comment(client, id):
     payload = {
@@ -74,3 +75,78 @@ def test_insert_new_comment(client, id):
         logging.info(f"Assert passed. comment created. {res_body}")
 
 
+    with allure.step("Assert new comment contain all data"):
+        assert set(res_body.keys()) == {"id", "postId", "body", "email", "name"}
+        assert res_body['id'] == payload['id']
+        assert res_body['postId'] == payload['postId']
+        assert res_body['name'] == payload['name']
+        assert res_body['body'] == payload['body']
+        assert res_body['email'] == payload['email']
+        logging.info(f"Assert passed. new comment contain all data.")
+
+# PUT function
+
+def test_put_comment(client, id):
+
+    payload = {
+        "postId": 3,
+        "id": 503,
+        "name": "comment 503",
+        "email": "bbbbb@hotmail.com",
+        "body": "update comment"
+    }
+
+    res = client.put(f"/comments/{id}", payload)
+    res_body = res.json()
+
+    #Assertions
+    with allure.step("Assert status code"):
+        assert client.status_code(res, 200), f"Assert failed. Status code is {res.status_code}."
+        logging.info(f"Assert passed. Status code is {res.status_code}.")
+
+
+    with allure.step("Assert comment updated."):
+        assert set(res_body.keys()) == {"id", "postId", "body", "email", "name"}
+        assert res_body['postId'] == payload['postId']
+        #assert res_body['id'] == payload['id']
+        assert res_body['name'] == payload['name']
+        assert res_body['body'] == payload['body']
+        assert res_body['email'] == payload['email']
+        logging.info(f"Assert passed. comment updated.")
+
+
+def test_patch_comment(client, id):
+
+    payload = {
+        "name": "new comment",
+        "email": "ccccc@hotmail.com"
+    }
+
+    res = client.patch(f"/comments/{id}", payload)
+    res_body = res.json()
+
+    #Assertions
+    with allure.step("Assert status code"):
+        assert client.status_code(res, 200), f"Assert failed. Status code is {res.status_code}."
+        logging.info(f"Assert passed. Status code is {res.status_code}.")
+
+    with allure.step("Assert new parameters"):
+        assert res_body['name'] == payload['name']
+        assert res_body['email'] == payload['email']
+        logging.info(f"Assert passed. new name is {res_body['name']}, and new email is {res_body['email']}.")
+
+#DELETE functions
+def test_delete_comment(client, id):
+
+    res = client.delete(f"/comments/{id}")
+    res_body = res.json()
+
+
+    #Assertions
+    with allure.step("Assert status code"):
+        assert client.status_code(res, 200), f"Assert failed. Status code is {res.status_code}."
+        logging.info(f"Assert passed. Status code is {res.status_code}.")
+
+    with allure.step("Assert comments is deleted"):
+        assert_that(res_body).is_empty(), f"Assert failed. not delete the comments."
+        logging.info(f"Assert passed. comments is deleted.")
