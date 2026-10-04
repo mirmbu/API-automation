@@ -52,7 +52,7 @@ def test_get_comment_by_id(client, id):
 
 #POST function
 
-def test_insert_new_comment(client, id):
+def test_insert_new_comment(client):
     payload = {
         "postId": 1,
         "id": 501,
